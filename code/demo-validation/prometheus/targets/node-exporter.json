@@ -1,0 +1,9 @@
+[
+  {
+    "targets": ["10.0.0.5:9100"],
+    "labels": {
+      "job": "node-exporter",
+      "host": "docker-desktop-vm"
+    }
+  }
+]

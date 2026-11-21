@@ -1,0 +1,12 @@
+=== 1) 预热 100 key (ttl=10s) ===
+  预热完成
+=== 2) reset 后打平稳段（应全命中）===
+{"hit":0,"miss":0,"total":0,"hit_rate":"0.000"}
+{"hit":100,"miss":0,"total":100,"hit_rate":"1.000"}
+=== 3) 等待 11s（统一 TTL=10s 到期 → 雪崩）===
+=== 4) reset 后打雪崩段（应全 miss → 打 DB）===
+{"hit":0,"miss":0,"total":0,"hit_rate":"0.000"}
+{"hit":1,"miss":99,"total":100,"hit_rate":"0.010"}
+=== 5) redis 侧 hit/miss（INFO stats）===
+keyspace_hits:206
+keyspace_misses:199

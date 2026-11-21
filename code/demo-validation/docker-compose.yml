@@ -1,0 +1,189 @@
+# =============================================================================
+# SkyWalking 根因分析端到端验证栈
+#
+# 对应《SkyWalking 性能分析引擎》第 15 章（从零建 hermes-agent 根因分析链路）。
+# 链路：ES(存储) + OAP(分析) + UI(可视化) + MySQL(业务库/慢查询) +
+#       order-svc -> cart-svc -> member-svc(级联慢查询，复现旗舰场景) +
+#       node-exporter(10.0.0.5:9100，静态 IP，对齐 analyze.py 的 OS 实证层)
+#
+# 使用前先确保 demo-app/agent/skywalking-agent 目录已就绪（下载脚本见 README）。
+# =============================================================================
+
+services:
+  es:
+    image: docker.m.daocloud.io/elasticsearch:8.17.0
+    container_name: es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9222:9200"
+      - "9322:9300"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/9200'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  oap:
+    image: docker.m.daocloud.io/apache/skywalking-oap-server:10.2.0
+    container_name: oap
+    depends_on:
+      es:
+        condition: service_healthy
+    environment:
+      - SW_STORAGE=elasticsearch
+      - SW_STORAGE_ES_CLUSTER_NODES=es:9200
+      - SW_HEALTH_CHECKER=default
+      - SW_TELEMETRY=prometheus
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "11800:11800"   # gRPC（agent 上报）
+      - "12800:12800"   # GraphQL / REST（分析脚本与 UI 查询）
+      - "1234:1234"     # prometheus telemetry（/metrics）
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/12800'"]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+      start_period: 60s
+
+  ui:
+    image: docker.m.daocloud.io/apache/skywalking-ui:10.2.0
+    container_name: ui
+    depends_on:
+      - oap
+    environment:
+      - SW_OAP_ADDRESS=http://oap:12800
+    ports:
+      - "8383:8080"
+
+  mysql:
+    image: docker.m.daocloud.io/mysql:8.0
+    container_name: mysql
+    command:
+      - --innodb_buffer_pool_size=67108864
+      - --max_connections=300
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bizdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./demo-app/mysql-init:/docker-entrypoint-initdb.d:ro
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  prometheus:
+    image: docker.m.daocloud.io/prom/prometheus:v2.48.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/targets:/etc/prometheus/targets:ro
+
+  redis:
+    image: docker.m.daocloud.io/redis:7.0
+    container_name: redis
+    command: ["--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+
+  node-exporter:
+    image: docker.m.daocloud.io/prom/node-exporter:v1.7.0
+    container_name: node-exporter
+    networks:
+      default:
+        ipv4_address: 10.0.0.5        # 静态 IP，对齐 analyze.py 的 OS 实证层 instance
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    restart: unless-stopped
+
+  order-svc:
+    build:
+      context: ./demo-app
+    image: demo-app:1.1.0
+    container_name: order-svc
+    depends_on:
+      oap:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    environment:
+      - SW_AGENT_NAME=order-svc
+      - SW_AGENT_NAMESPACE=demo
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
+      - CTX_PATH=/order
+      - DOWNSTREAM_URL=http://cart-svc:8080/cart/test/sql/real-slow
+      - DB_HOST=mysql
+      - SPRING_DATASOURCE_HIKARI_MAXIMUM-POOL-SIZE=4
+    ports:
+      - "8080:8080"
+
+  cart-svc:
+    build:
+      context: ./demo-app
+    image: demo-app:1.1.0
+    container_name: cart-svc
+    depends_on:
+      oap:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    environment:
+      - SW_AGENT_NAME=cart-svc
+      - SW_AGENT_NAMESPACE=demo
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
+      - CTX_PATH=/cart
+      - DOWNSTREAM_URL=http://member-svc:8080/member/test/sql/real-slow
+      - DB_HOST=mysql
+      - SPRING_DATASOURCE_HIKARI_MAXIMUM-POOL-SIZE=4
+    ports:
+      - "8081:8080"
+
+  member-svc:
+    build:
+      context: ./demo-app
+    image: demo-app:1.1.0
+    container_name: member-svc
+    depends_on:
+      oap:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    environment:
+      - SW_AGENT_NAME=member-svc
+      - SW_AGENT_NAMESPACE=demo
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
+      - CTX_PATH=/member
+      - DOWNSTREAM_URL=
+      - DB_HOST=mysql
+      - REDIS_HOST=redis
+      - JAVA_OPTS=-javaagent:/app/agent/skywalking-agent.jar -Xms512m -Xmx2048m
+      - SPRING_DATASOURCE_HIKARI_MAXIMUM-POOL-SIZE=2
+    ports:
+      - "8082:8080"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+          gateway: 10.0.0.1
+
+volumes:
+  mysql-data:

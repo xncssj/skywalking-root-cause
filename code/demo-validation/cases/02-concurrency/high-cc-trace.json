@@ -1,0 +1,194 @@
+{
+  "spans": [
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760008",
+      "serviceCode": "order-svc|demo|",
+      "endpointName": "GET:/order/test/sql/real-slow",
+      "startTime": 1786785530876,
+      "endTime": 1786785534450,
+      "isError": false,
+      "type": "Entry",
+      "component": "Tomcat",
+      "peer": "",
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://localhost:8080/order/test/sql/real-slow"
+        },
+        {
+          "key": "http.method",
+          "value": "GET"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760008",
+      "serviceCode": "order-svc|demo|",
+      "endpointName": "/cart/test/sql/real-slow",
+      "startTime": 1786785530878,
+      "endTime": 1786785534445,
+      "isError": false,
+      "type": "Exit",
+      "component": "HttpClient",
+      "peer": "cart-svc:8080",
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://cart-svc:8080/cart/test/sql/real-slow"
+        },
+        {
+          "key": "http.method",
+          "value": "GET"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "d141b70c242449eca711d12e3bf724ce.69.17867855326820008",
+      "serviceCode": "cart-svc|demo|",
+      "endpointName": "GET:/cart/test/sql/real-slow",
+      "startTime": 1786785532682,
+      "endTime": 1786785534444,
+      "isError": false,
+      "type": "Entry",
+      "component": "Tomcat",
+      "peer": "",
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://cart-svc:8080/cart/test/sql/real-slow"
+        },
+        {
+          "key": "http.method",
+          "value": "GET"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "d141b70c242449eca711d12e3bf724ce.69.17867855326820008",
+      "serviceCode": "cart-svc|demo|",
+      "endpointName": "/member/test/sql/real-slow",
+      "startTime": 1786785532685,
+      "endTime": 1786785534442,
+      "isError": false,
+      "type": "Exit",
+      "component": "HttpClient",
+      "peer": "member-svc:8080",
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://member-svc:8080/member/test/sql/real-slow"
+        },
+        {
+          "key": "http.method",
+          "value": "GET"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "3d1bfb14f4ec4a349fd16aeea50e53b5.69.17867855326900008",
+      "serviceCode": "member-svc|demo|",
+      "endpointName": "GET:/member/test/sql/real-slow",
+      "startTime": 1786785532690,
+      "endTime": 1786785534442,
+      "isError": false,
+      "type": "Entry",
+      "component": "Tomcat",
+      "peer": "",
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://member-svc:8080/member/test/sql/real-slow"
+        },
+        {
+          "key": "http.method",
+          "value": "GET"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "3d1bfb14f4ec4a349fd16aeea50e53b5.69.17867855326900008",
+      "serviceCode": "member-svc|demo|",
+      "endpointName": "HikariCP/Connection/getConnection",
+      "startTime": 1786785532692,
+      "endTime": 1786785532692,
+      "isError": false,
+      "type": "Local",
+      "component": "HikariCP",
+      "peer": "",
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "3d1bfb14f4ec4a349fd16aeea50e53b5.69.17867855326900008",
+      "serviceCode": "member-svc|demo|",
+      "endpointName": "Mysql/JDBC/Statement/executeQuery",
+      "startTime": 1786785532692,
+      "endTime": 1786785534421,
+      "isError": false,
+      "type": "Exit",
+      "component": "mysql-connector-java",
+      "peer": "mysql:3306",
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "bizdb"
+        },
+        {
+          "key": "db.statement",
+          "value": "SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01'"
+        }
+      ]
+    },
+    {
+      "traceId": "8f4d2ca21f604db8aed017b8fde92556.69.17867855308760009",
+      "segmentId": "3d1bfb14f4ec4a349fd16aeea50e53b5.69.17867855326900008",
+      "serviceCode": "member-svc|demo|",
+      "endpointName": "HikariCP/Connection/close",
+      "startTime": 1786785534439,
+      "endTime": 1786785534439,
+      "isError": false,
+      "type": "Local",
+      "component": "HikariCP",
+      "peer": "",
+      "layer": "Unknown",
+      "tags": []
+    }
+  ]
+}

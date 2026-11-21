@@ -1,0 +1,6 @@
+# 大体积二进制与临时产物不入库
+demo-app/agent/skywalking-agent/
+__pycache__/
+*.pyc
+.pytest_cache/
+target/

@@ -1,0 +1,56 @@
+[INFO] JAVA_HOME: /opt/java/openjdk
+[INFO] arthas-boot version: 4.3.3
+[INFO] arthas home: /root/.arthas/lib/4.3.4/arthas
+[INFO] The target process already listen port 3658, skip attach.
+[INFO] arthas-client connect 127.0.0.1 3658
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.                           
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'                          
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.                          
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |                         
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'                          
+wiki         https://arthas.aliyun.com/doc                                      
+tutorials    https://arthas.aliyun.com/doc/arthas-tutorials.html                
+version      4.3.4                                                              
+main_class   /app/app.jar                                                       
+pid          7                                                                  
+start_time   2026-08-15 11:20:41.758                                            
+current_time 2026-08-15 11:21:58.680                                            
+[arthas@7]$ thread --state BLOCKED | plaintext
+Threads Total: 70, NEW: 0, RUNNABLE: 30, BLOCKED: 11, WAITING: 4, TIMED_WAITING:
+ 25, TERMINATED: 0                                                              
+ID NAME                GROUP     PRIORI STATE  %CPU  DELTA_ TIME   INTER DAEMON 
+63 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.42 false true   
+64 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+65 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+66 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+67 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+68 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+69 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+71 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+72 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+95 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+96 http-nio-8080-exec- main      5      BLOCKE 0.0   0.000  0:0.00 false true   
+[arthas@7]$ thread -n 3 | plaintext
+"arthas-command-execute" Id=94 cpuUsage=0.38% deltaTime=0ms time=41ms RUNNABLE
+    at java.management@17.0.19/sun.management.ThreadImpl.dumpThreads0(Native Method)
+    at java.management@17.0.19/sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:492)
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.processTopBusyThreads(ThreadCommand.java:206)
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.process(ThreadCommand.java:122)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.process(AnnotatedCommandImpl.java:82)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.access$100(AnnotatedCommandImpl.java:18)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl$ProcessHandler.handle(AnnotatedCommandImpl.java:113)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl$ProcessHandler.handle(AnnotatedCommandImpl.java:110)
+    at com.taobao.arthas.core.shell.system.impl.ProcessImpl$CommandProcessTask.run(ProcessImpl.java:385)
+    at java.base@17.0.19/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+    at java.base@17.0.19/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+    at java.base@17.0.19/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+    at java.base@17.0.19/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+    at java.base@17.0.19/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+    at java.base@17.0.19/java.lang.Thread.run(Thread.java:840)
+"DataCarrier.DEFAULT.Consumer.0.Thread" Id=24 cpuUsage=0.35% deltaTime=0ms time=580ms TIMED_WAITING
+    at java.base@17.0.19/java.lang.Thread.sleep(Native Method)
+    at app//org.apache.skywalking.apm.commons.datacarrier.consumer.ConsumerThread.run(ConsumerThread.java:55)
+"DataCarrier.gRPC-log.Consumer.0.Thread" Id=32 cpuUsage=0.28% deltaTime=0ms time=564ms TIMED_WAITING
+    at java.base@17.0.19/java.lang.Thread.sleep(Native Method)
+    at app//org.apache.skywalking.apm.commons.datacarrier.consumer.ConsumerThread.run(ConsumerThread.java:55)
+[arthas@7]$ 

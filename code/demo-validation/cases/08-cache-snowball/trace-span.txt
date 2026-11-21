@@ -1,0 +1,6 @@
+=== traceId b4999994df5147bca1d5c3f5db16163b.65.17867921448890001 duration 4856ms ===
+Entry Tomcat      GET:/member/test/cache/1                    4856ms
+├── Exit Lettuce  redis:6379  Lettuce/GET                      11ms   # miss（未命中）
+├── Local HikariCP HikariCP/Connection/getConnection          1743ms  # 雪崩并发回源，连接池排队
+├── Exit mysql    mysql:3306  Mysql/JDBC/Statement/executeQuery 100ms  # 回源 DB
+└── Exit Lettuce  redis:6379  Lettuce/SETEX                     4ms   # 回填

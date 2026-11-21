@@ -1,0 +1,142 @@
+[INFO] JAVA_HOME: /opt/java/openjdk
+[INFO] arthas-boot version: 4.3.3
+[INFO] arthas home: /root/.arthas/lib/4.3.4/arthas
+[INFO] The target process already listen port 3658, skip attach.
+[INFO] arthas-client connect 127.0.0.1 3658
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.                           
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'                          
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.                          
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |                         
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'                          
+
+wiki         https://arthas.aliyun.com/doc                                      
+tutorials    https://arthas.aliyun.com/doc/arthas-tutorials.html                
+version      4.3.4                                                              
+main_class   /app/app.jar                                                       
+pid          7                                                                  
+start_time   2026-08-15 10:25:42.213                                            
+current_time 2026-08-15 10:27:25.120                                            
+
+[arthas@7]$ dashboard -n 1 | plaintext
+ID NAME                GROUP     PRIORI STATE  %CPU  DELTA_ TIME   INTER DAEMON 
+76 DestroyJavaVM       main      5      RUNNAB 0.0   0.000  0:21.6 false false  
+66 http-nio-8080-exec- main      5      WAITIN 0.0   0.000  0:21.3 false true   
+68 http-nio-8080-exec- main      5      WAITIN 0.0   0.000  0:20.7 false true   
+70 http-nio-8080-exec- main      5      WAITIN 0.0   0.000  0:19.3 false true   
+64 http-nio-8080-exec- main      5      WAITIN 0.0   0.000  0:18.1 false true   
+72 http-nio-8080-exec- main      5      RUNNAB 0.0   0.000  0:18.1 false true   
+24 DataCarrier.DEFAULT main      5      TIMED_ 0.0   0.000  0:1.38 false true   
+45 grpc-nio-worker-ELG main      5      RUNNAB 0.0   0.000  0:1.34 false true   
+32 DataCarrier.gRPC-lo main      5      TIMED_ 0.0   0.000  0:1.22 false true   
+23 SkywalkingAgent-4-G main      5      TIMED_ 0.0   0.000  0:1.11 false true   
+Memory           used  total max  usage GC                                      
+heap             474M  1321M            gc.g1_young_generat 628                 
+g1_eden_space    429M  831M  -1         ion.count                               
+g1_old_gen       45M   489M       2.23% gc.g1_young_generat 7067                
+                 393K  1024K -1         ion.time(ms)                            
+nonheap          109M  112M  -1         gc.g1_old_generatio 0                   
+codeheap_'non-nm 1M    3M    7M   18.83 n.count                                 
+ethods'                           %                                             
+Runtime                                                                         
+os.name                                 Linux                                   
+os.version                              6.12.76-linuxkit                        
+java.version                            17.0.19                                 
+Process ends after 1 time(s).
+[arthas@7]$ thread -n 3 | plaintext
+"http-nio-8080-exec-3" Id=66 cpuUsage=96.21% deltaTime=242ms time=22768ms RUNNABLE
+    at java.base@17.0.19/java.lang.AbstractStringBuilder.<init>(AbstractStringBuilder.java:111)
+    at java.base@17.0.19/java.lang.StringBuilder.<init>(StringBuilder.java:131)
+    at com.example.demo.SlowController.cpuHot(SlowController.java:89)
+    at jdk.internal.reflect.GeneratedMethodAccessor21.invoke(Unknown Source)
+    at java.base@17.0.19/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.base@17.0.19/java.lang.reflect.Method.invoke(Method.java:569)
+    at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)
+    at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188)
+    at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+    at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926)
+    at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831)
+    at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+    at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+    at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+    at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+    at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+    at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+    at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+    at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:206)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150)
+    at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150)
+    at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+    at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150)
+    at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+    at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150)
+    at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+    at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150)
+    at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+    at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+    at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+    at org.apache.catalina.core.StandardHostValve.$sw$original$invoke$005sj03(StandardHostValve.java:115)
+    at org.apache.catalina.core.StandardHostValve.$sw$original$invoke$005sj03$accessor$$sw$p8ebm33(StandardHostValve.java)
+    at org.apache.catalina.core.StandardHostValve$$sw$auxiliary$9uckk72.call(Unknown Source)
+    at app//org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstMethodsInter.intercept(InstMethodsInter.java:95)
+    at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java)
+    at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+    at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+    at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+    at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+    at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+    at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+    at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1736)
+    at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+    at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+    at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+    at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+    at java.base@17.0.19/java.lang.Thread.run(Thread.java:840)
+
+
+"grpc-nio-worker-ELG-1-5" Id=45 cpuUsage=0.79% deltaTime=1ms time=1362ms RUNNABLE (in native)
+    at java.base@17.0.19/sun.nio.ch.EPoll.wait(Native Method)
+    at java.base@17.0.19/sun.nio.ch.EPollSelectorImpl.doSelect(EPollSelectorImpl.java:118)
+    at java.base@17.0.19/sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:129)
+    at java.base@17.0.19/sun.nio.ch.SelectorImpl.select(SelectorImpl.java:146)
+    at app//org.apache.skywalking.apm.dependencies.io.netty.channel.nio.SelectedSelectionKeySetSelector.select(SelectedSelectionKeySetSelector.java:68)
+    at app//org.apache.skywalking.apm.dependencies.io.netty.channel.nio.NioEventLoop.select(NioEventLoop.java:887)
+    at app//org.apache.skywalking.apm.dependencies.io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:526)
+    at app//org.apache.skywalking.apm.dependencies.io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)
+    at app//org.apache.skywalking.apm.dependencies.io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+    at app//org.apache.skywalking.apm.dependencies.io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+    at java.base@17.0.19/java.lang.Thread.run(Thread.java:840)
+
+
+"SkywalkingAgent-7-JVMService-consume-0" Id=26 cpuUsage=0.62% deltaTime=1ms time=485ms TIMED_WAITING on java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@1086455d
+    at java.base@17.0.19/jdk.internal.misc.Unsafe.park(Native Method)
+    -  waiting on java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@1086455d
+    at java.base@17.0.19/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+    at java.base@17.0.19/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1679)
+    at java.base@17.0.19/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+    at java.base@17.0.19/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+    at java.base@17.0.19/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1062)
+    at java.base@17.0.19/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1122)
+    at java.base@17.0.19/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+    at java.base@17.0.19/java.lang.Thread.run(Thread.java:840)
+
+
+[arthas@7]$ trace com.example.demo.SlowController cpuHot -n 1 | plaintext
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 435 ms, listenerId: 1
+`---ts=2026-08-15 10:29:11.031;thread_name=http-nio-8080-exec-5;id=68;is_daemon=true;priority=5;TCCL=org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoader@2059c3ff
+    `---[2713.008699ms] com.example.demo.SlowController:cpuHot()
+
+Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
+[arthas@7]$ quit | plaintext
+Session has been terminated.
+Arthas is still running in the background.
+To completely shutdown arthas, please execute the 'stop' command.

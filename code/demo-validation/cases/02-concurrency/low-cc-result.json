@@ -1,0 +1,97 @@
+{
+  "verdict": "DB_BOTTLENECK",
+  "summary": "DB 慢查询为主因（建议 EXPLAIN + 检查索引）",
+  "evidence": [
+    {
+      "层": "L2-Trace",
+      "证据": "最慢 Trace 8f4d2ca21f604db8aed017b8fde92556.72.17867849630350001 耗时 1864ms",
+      "引用": "8f4d2ca21f604db8aed017b8fde92556.72.17867849630350001"
+    },
+    {
+      "层": "L1-端点",
+      "证据": "order-svc|demo| - GET:/order/test/sql/real-slow RT=1642ms",
+      "引用": "b3JkZXItc3ZjfGRlbW98.1_R0VUOi9vcmRlci90ZXN0L3NxbC9yZWFsLXNsb3c="
+    },
+    {
+      "层": "L1-端点",
+      "证据": "cart-svc|demo| - GET:/cart/test/sql/real-slow RT=1634ms",
+      "引用": "Y2FydC1zdmN8ZGVtb3w=.1_R0VUOi9jYXJ0L3Rlc3Qvc3FsL3JlYWwtc2xvdw=="
+    },
+    {
+      "层": "L1-端点",
+      "证据": "member-svc|demo| - GET:/member/test/sql/real-slow RT=1626ms",
+      "引用": "bWVtYmVyLXN2Y3xkZW1vfA==.1_R0VUOi9tZW1iZXIvdGVzdC9zcWwvcmVhbC1zbG93"
+    },
+    {
+      "层": "L3-瓶颈",
+      "证据": "瓶颈 span: member-svc|demo| 调用 mysql:3306 耗时 1821ms，占整条 trace 97.7%",
+      "引用": "mysql:3306"
+    },
+    {
+      "层": "L5-SQL",
+      "证据": "DB span 占比 97.7%，抽样 SQL: SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01'",
+      "引用": "mysql:3306"
+    },
+    {
+      "层": "L3+-OS",
+      "证据": "CPU 主导=us（用户态热点主导 → perf top -g / async-profiler / jstack）",
+      "引用": "10.0.0.5:9100"
+    },
+    {
+      "层": "L3+-OS",
+      "证据": "内存使用率均值 81%，slope 58.75%/h（R²=0.59）→ NONE",
+      "引用": "10.0.0.5:9100"
+    },
+    {
+      "层": "L4-OS",
+      "证据": "重传率 0.0%、TIME_WAIT 0 → 网络正常",
+      "引用": "10.0.0.5:9100"
+    }
+  ],
+  "slow_endpoints": [
+    {
+      "service_name": "order-svc|demo|",
+      "service_id": "b3JkZXItc3ZjfGRlbW98.1",
+      "endpoint_name": "GET:/order/test/sql/real-slow",
+      "endpoint_id": "b3JkZXItc3ZjfGRlbW98.1_R0VUOi9vcmRlci90ZXN0L3NxbC9yZWFsLXNsb3c=",
+      "resp_time_ms": 1642.0
+    },
+    {
+      "service_name": "cart-svc|demo|",
+      "service_id": "Y2FydC1zdmN8ZGVtb3w=.1",
+      "endpoint_name": "GET:/cart/test/sql/real-slow",
+      "endpoint_id": "Y2FydC1zdmN8ZGVtb3w=.1_R0VUOi9jYXJ0L3Rlc3Qvc3FsL3JlYWwtc2xvdw==",
+      "resp_time_ms": 1634.0
+    },
+    {
+      "service_name": "member-svc|demo|",
+      "service_id": "bWVtYmVyLXN2Y3xkZW1vfA==.1",
+      "endpoint_name": "GET:/member/test/sql/real-slow",
+      "endpoint_id": "bWVtYmVyLXN2Y3xkZW1vfA==.1_R0VUOi9tZW1iZXIvdGVzdC9zcWwvcmVhbC1zbG93",
+      "resp_time_ms": 1626.0
+    }
+  ],
+  "span_stats": {
+    "total_ms": 1864.0,
+    "service_durations": {},
+    "component_durations": {
+      "mysql-connector-java": 1821.0,
+      "local": 43.0
+    },
+    "dominant_exit": {
+      "component": "mysql-connector-java",
+      "service": "member-svc|demo|",
+      "peer": "mysql:3306",
+      "duration_ms": 1821.0,
+      "ratio": 0.976931330472103,
+      "sql": "SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01'"
+    },
+    "exit_count": 3
+  },
+  "os_scene": {
+    "cpu_dominant": "us",
+    "host_overloaded": false,
+    "mem_leak_risk": "NONE",
+    "network_bottleneck": false
+  }
+}

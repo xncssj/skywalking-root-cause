@@ -1,0 +1,20 @@
+2026-08-15T09:27:50.024Z ERROR 7 --- [nio-8080-exec-6] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [/member] threw exception [Request processing failed: org.springframework.jdbc.UncategorizedSQLException: StatementCallback; uncategorized SQLException for SQL [SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01']; SQL state [HY001]; error code [0]; Java heap space] with root cause
+
+java.lang.OutOfMemoryError: Java heap space
+
+2026-08-15T09:27:57.136Z ERROR 7 --- [nio-8080-exec-7] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [/member] threw exception [Request processing failed: org.springframework.jdbc.UncategorizedSQLException: StatementCallback; uncategorized SQLException for SQL [SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01']; SQL state [HY001]; error code [0]; Java heap space] with root cause
+
+java.lang.OutOfMemoryError: Java heap space
+
+2026-08-15T09:28:04.452Z ERROR 7 --- [nio-8080-exec-8] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [/member] threw exception [Request processing failed: org.springframework.jdbc.UncategorizedSQLException: StatementCallback; uncategorized SQLException for SQL [SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01']; SQL state [HY001]; error code [0]; Java heap space] with root cause
+
+java.lang.OutOfMemoryError: Java heap space
+
+2026-08-15T09:28:11.629Z ERROR 7 --- [nio-8080-exec-9] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [/member] threw exception [Request processing failed: org.springframework.jdbc.UncategorizedSQLException: StatementCallback; uncategorized SQLException for SQL [SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01']; SQL state [HY001]; error code [0]; Java heap space] with root cause
+
+java.lang.OutOfMemoryError: Java heap space
+
+2026-08-15T09:28:18.582Z ERROR 7 --- [io-8080-exec-10] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [/member] threw exception [Request processing failed: org.springframework.jdbc.UncategorizedSQLException: StatementCallback; uncategorized SQLException for SQL [SELECT * FROM t_biz_order WHERE status = 1 AND create_time > '2024-01-01']; SQL state [HY001]; error code [0]; Java heap space] with root cause
+
+java.lang.OutOfMemoryError: Java heap space
+
